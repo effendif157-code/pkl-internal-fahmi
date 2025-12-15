@@ -39,6 +39,9 @@ resources/views/tentang.blade.php FUNGSI: Halaman tentang toko online
     tanggal sesuai pattern ↑ d M Y, H:i:s = 11 Dec 2024, 14:30:00 --}}
 
     <a href="/">← Kembali ke Home</a>
+    <a href="{{ route='produk') }}">← Kembali ke Home</a>
+
+    
     {{-- ↑ Link biasa ke halaman utama --}}
   </body>
 </html>
