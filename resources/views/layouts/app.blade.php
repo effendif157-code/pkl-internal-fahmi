@@ -34,7 +34,7 @@
          FLASH MESSAGES
          ============================================ --}}
     <div class="container mt-3">
-        @include('profile.partials.flash-message')
+        @include('profile.partials.flash-masage')
     </div>
 
     {{-- ============================================
