@@ -31,7 +31,7 @@
     @include('profile.partials.navbar')
 
     {{-- ============================================
-         FLASH MESSAGES
+         FLASH MESSAGESa
          ============================================ --}}
     <div class="container mt-3">
         @include('profile.partials.flash-masage')
@@ -45,7 +45,7 @@
     </main>
 
     {{-- ============================================
-         FOOTER
+         FOOTER¥
          ============================================ --}}
     @include('profile.partials.footer')
 
