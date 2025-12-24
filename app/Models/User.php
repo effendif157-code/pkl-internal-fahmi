@@ -62,6 +62,8 @@ class User extends Authenticatable
     public function wishlists()
     {
         return $this->hasMany(Wishlist::class);
+        return $this->belongsToMany(Product::class, 'wishlists')
+            ->withTimestamps();
     }
 
     /**
@@ -107,6 +109,7 @@ class User extends Authenticatable
         return $this->wishlists()
             ->where('product_id', $product->id)
             ->exists();
+
     }
 
         // Tambahkan accessor untuk avatar URL
@@ -159,4 +162,5 @@ class User extends Authenticatable
         // Ambil maksimal 2 huruf pertama saja
         return substr($initials, 0, 2);
     }
+
 }
