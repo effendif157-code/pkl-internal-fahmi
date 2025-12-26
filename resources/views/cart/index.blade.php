@@ -66,7 +66,7 @@
                                             </form>
                                         </td>
                                         <td class="text-end align-middle fw-bold">
-                                            Rp {{ number_format($item->subtotal, 0, ',', '.') }}
+                                            Rp {{ number_format($cart->total, 0, ',', '.') }}
                                         </td>
                                         <td class="align-middle">
                                             <form action="{{ route('cart.remove', $item->id) }}" method="POST">

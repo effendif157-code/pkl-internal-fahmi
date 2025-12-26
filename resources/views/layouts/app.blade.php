@@ -91,7 +91,7 @@
       badge.style.display = count > 0 ? "inline-block" : "none";
     }
   }
-</script>
+</script>c  
 <body>
     {{-- ============================================
          NAVBAR
