@@ -25,9 +25,9 @@
         </div>
 
         @if($user->google_id)
-            <form action="{{ route('profile.google.unlink') }}" method="POST" class="d-inline">
-                @csrf
-                @method('DELETE')
+           
+                
+      
                 <button type="submit"
                         class="btn btn-outline-danger btn-sm"
                         onclick="return confirm('Putuskan koneksi dengan Google?')">
