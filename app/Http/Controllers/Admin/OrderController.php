@@ -17,8 +17,8 @@ class OrderController extends Controller
     {
         $orders = Order::query()
             ->with('user') // N+1 prevention: Load data user pemilik order
-                       // Fitur Filter Status (?status=pending)
-            ->when($request->status, function ($q, $status) {
+            // Fitur Filter Status (?status=pending)
+            ->when($request->status, function($q, $status) {
                 $q->where('status', $status);
             })
             ->latest() // Urutkan terbaru
@@ -45,11 +45,11 @@ class OrderController extends Controller
     {
         // Validasi status yang dikirim form
         $request->validate([
-            'status' => 'required|in:processing,completed,cancelled',
+            'status' => 'required|in:processing,shipped,delivered,cancelled'
         ]);
 
         $oldStatus = $order->status;
-        $newStatus = $request->status;
+        $newStatus = $request->status === 'completed' ? 'delivered' : $request->status;
 
         // ============================================================
         // LOGIKA RESTOCK (PENTING!)

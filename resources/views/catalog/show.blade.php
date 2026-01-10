@@ -1,7 +1,7 @@
 {{-- ================================================
-     FILE: resources/views/catalog/show.blade.php
-     FUNGSI: Halaman detail produk
-     ================================================ --}}
+FILE: resources/views/catalog/show.blade.php
+FUNGSI: Halaman detail produk
+================================================ --}}
 
 @extends('layouts.app')
 
@@ -29,31 +29,27 @@
             <div class="card border-0 shadow-sm">
                 {{-- Main Image --}}
                 <div class="position-relative">
-                    <img src="{{ $product->image_url }}"
-                         id="main-image"
-                         class="card-img-top"
-                         alt="{{ $product->name }}"
-                         style="height: 400px; object-fit: contain; background: #f8f9fa;">
+                    <img src="{{ $product->image_url }}" id="main-image" class="card-img-top" alt="{{ $product->name }}"
+                        style="height: 400px; object-fit: contain; background: #f8f9fa;">
 
                     @if($product->has_discount)
-                        <span class="badge bg-danger position-absolute top-0 start-0 m-3 fs-6">
-                            -{{ $product->discount_percentage }}%
-                        </span>
+                    <span class="badge bg-danger position-absolute top-0 start-0 m-3 fs-6">
+                        -{{ $product->discount_percentage }}%
+                    </span>
                     @endif
                 </div>
 
                 {{-- Thumbnail Gallery --}}
                 @if($product->images->count() > 1)
-                    <div class="card-body">
-                        <div class="d-flex gap-2 overflow-auto">
-                            @foreach($product->images as $image)
-                                <img src="{{ asset('storage/' . $image->image_path) }}"
-                                     class="rounded border cursor-pointer"
-                                     style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;"
-                                     onclick="document.getElementById('main-image').src = this.src">
-                            @endforeach
-                        </div>
+                <div class="card-body">
+                    <div class="d-flex gap-2 overflow-auto">
+                        @foreach($product->images as $image)
+                        <img src="{{ asset('storage/' . $image->image_path) }}" class="rounded border cursor-pointer"
+                            style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;"
+                            onclick="document.getElementById('main-image').src = this.src">
+                        @endforeach
                     </div>
+                </div>
                 @endif
             </div>
         </div>
@@ -64,7 +60,7 @@
                 <div class="card-body">
                     {{-- Category --}}
                     <a href="{{ route('catalog.index', ['category' => $product->category->slug]) }}"
-                       class="badge bg-light text-dark text-decoration-none mb-2">
+                        class="badge bg-light text-dark text-decoration-none mb-2">
                         {{ $product->category->name }}
                     </a>
 
@@ -74,9 +70,9 @@
                     {{-- Price --}}
                     <div class="mb-4">
                         @if($product->has_discount)
-                            <div class="text-muted text-decoration-line-through">
-                                {{ $product->formatted_original_price }}
-                            </div>
+                        <div class="text-muted text-decoration-line-through">
+                            {{ $product->formatted_original_price }}
+                        </div>
                         @endif
                         <div class="h3 text-primary fw-bold mb-0">
                             {{ $product->formatted_price }}
@@ -86,17 +82,17 @@
                     {{-- Stock Status --}}
                     <div class="mb-4">
                         @if($product->stock > 10)
-                            <span class="badge bg-success">
-                                <i class="bi bi-check-circle me-1"></i> Stok Tersedia
-                            </span>
+                        <span class="badge bg-success">
+                            <i class="bi bi-check-circle me-1"></i> Stok Tersedia
+                        </span>
                         @elseif($product->stock > 0)
-                            <span class="badge bg-warning text-dark">
-                                <i class="bi bi-exclamation-triangle me-1"></i> Stok Tinggal {{ $product->stock }}
-                            </span>
+                        <span class="badge bg-warning text-dark">
+                            <i class="bi bi-exclamation-triangle me-1"></i> Stok Tinggal {{ $product->stock }}
+                        </span>
                         @else
-                            <span class="badge bg-danger">
-                                <i class="bi bi-x-circle me-1"></i> Stok Habis
-                            </span>
+                        <span class="badge bg-danger">
+                            <i class="bi bi-x-circle me-1"></i> Stok Habis
+                        </span>
                         @endif
                     </div>
 
@@ -110,17 +106,16 @@
                                 <label class="form-label">Jumlah</label>
                                 <div class="input-group" style="width: 140px;">
                                     <button type="button" class="btn btn-outline-secondary"
-                                            onclick="decrementQty()">-</button>
-                                    <input type="number" name="quantity" id="quantity"
-                                           value="1" min="1" max="{{ $product->stock }}"
-                                           class="form-control text-center">
+                                        onclick="decrementQty()">-</button>
+                                    <input type="number" name="quantity" id="quantity" value="1" min="1"
+                                        max="{{ $product->stock }}" class="form-control text-center">
                                     <button type="button" class="btn btn-outline-secondary"
-                                            onclick="incrementQty()">+</button>
+                                        onclick="incrementQty()">+</button>
                                 </div>
                             </div>
                             <div class="col">
-                                <button type="submit" class="btn btn-primary btn-lg w-100"
-                                        @if($product->stock == 0) disabled @endif>
+                                <button type="submit" class="btn btn-primary btn-lg w-100" @if($product->stock == 0)
+                                    disabled @endif>
                                     <i class="bi bi-cart-plus me-2"></i>
                                     Tambah ke Keranjang
                                 </button>
@@ -130,12 +125,12 @@
 
                     {{-- Wishlist --}}
                     @auth
-                        <button type="button"
-                                onclick="toggleWishlist({{ $product->id }})"
-                                class="btn btn-outline-danger mb-4 wishlist-btn-{{ $product->id }}">
-                            <i class="bi {{ auth()->user()->hasInWishlist($product) ? 'bi-heart-fill' : 'bi-heart' }} me-2"></i>
-                            {{ auth()->user()->hasInWishlist($product) ? 'Hapus dari Wishlist' : 'Tambah ke Wishlist' }}
-                        </button>
+                    <button type="button" onclick="toggleWishlist({{ $product->id }})"
+                        class="btn btn-outline-danger mb-4 wishlist-btn-{{ $product->id }}">
+                        <i
+                            class="bi {{ auth()->user()->hasInWishlist($product) ? 'bi-heart-fill' : 'bi-heart' }} me-2"></i>
+                        {{ auth()->user()->hasInWishlist($product) ? 'Hapus dari Wishlist' : 'Tambah ke Wishlist' }}
+                    </button>
                     @endauth
 
                     <hr>
@@ -143,7 +138,7 @@
                     {{-- Product Details --}}
                     <div class="mb-3">
                         <h6>Deskripsi</h6>
-                        <p class="text-muted">{!! nl2br(e($product->description)) !!}</p>
+                        <p class="text-muted">{!! $product->description !!}</p>
                     </div>
 
                     <div class="row text-muted small">

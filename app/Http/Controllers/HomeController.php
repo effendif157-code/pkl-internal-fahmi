@@ -38,6 +38,10 @@ class HomeController extends Controller
             ->take(6) // Batasi 6 kategori
             ->get();
 
+        // Debug: pastikan Category yang dipakai benar
+        // Hapus baris ini setelah debug
+        // dd(Category::class);
+
         // ================================================
         // PRODUK UNGGULAN (FEATURED)
         // - Flag is_featured = true

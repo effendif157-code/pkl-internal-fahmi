@@ -1,85 +1,645 @@
-/* ================================================
-   FILE: resources/css/app.css
-   FUNGSI: Entry point untuk semua CSS
-   ================================================ */
+/* =================================================
+   ASSALAAM FUN FOOTBALL STORE
+   Elegant Football Club Theme + Dark Mode
+   ================================================= */
 
-/* Import Bootstrap CSS */
-/* Kita import di sini agar ikut ter-compile oleh Vite dan bisa di-minify saat production */
+/* Bootstrap */
 @import "bootstrap/dist/css/bootstrap.min.css";
 
-/* Import Bootstrap Icons */
+/* Bootstrap Icons */
 @import "bootstrap-icons/font/bootstrap-icons.css";
 
-/* ================================================
-   CUSTOM STYLES - Variabel dan Override
-   ================================================ */
+/* =================================================
+   THEME VARIABLES
+   ================================================= */
 
+/* ---------- LIGHT MODE ---------- */
 :root {
-    /* Warna Brand Toko */
-    --primary-color: #4f46e5;
-    /* Indigo */
-    --secondary-color: #10b981;
-    /* Emerald */
-    --accent-color: #f59e0b;
-    /* Amber */
+    /* Brand */
+    --primary: #0b3c5d;
+    /* Navy Blue */
+    --primary-soft: #144e73;
+    --accent: #f5c518;
+    /* Gold */
+    --danger: #c1121f;
+    /* Red */
 
-    /* Warna Text */
-    --text-dark: #1f2937;
-    --text-muted: #6b7280;
-    --text-light: #9ca3af;
+    /* Text */
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+
+    /* Background */
+    --bg-main: #f8fafc;
+    --bg-card: #ffffff;
+    --bg-soft: #f1f5f9;
+
+    /* Border & Shadow */
+    --border-color: #e5e7eb;
+    --shadow-soft: 0 10px 25px rgba(0, 0, 0, 0.08);
 }
 
-/* Override Bootstrap Primary */
+/* ---------- DARK MODE ---------- */
+[data-theme="dark"] {
+    --primary: #0b3c5d;
+    --primary-soft: #0e2f44;
+    --accent: #f5c518;
+    --danger: #ef233c;
+
+    --text-main: #e5e7eb;
+    --text-muted: #94a3b8;
+
+    --bg-main: #020617;
+    --bg-card: #0f172a;
+    --bg-soft: #020617;
+
+    --border-color: #1e293b;
+    --shadow-soft: 0 15px 40px rgba(0, 0, 0, 0.6);
+}
+
+/* =================================================
+   GLOBAL
+   ================================================= */
+
+body {
+    font-family: "Inter", system-ui, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--accent);
+}
+
+/* =================================================
+   NAVBAR
+   ================================================= */
+
+.navbar {
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.navbar-brand {
+    font-weight: 900;
+    font-size: 1.4rem;
+    letter-spacing: -0.5px;
+    color: var(--primary) !important;
+}
+
+.navbar-brand span {
+    color: var(--accent);
+}
+
+.nav-link {
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.nav-link:hover {
+    color: var(--primary);
+}
+
+/* =================================================
+   BUTTONS
+   ================================================= */
+
 .btn-primary {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
+    background-color: var(--primary);
+    border-color: var(--primary);
+    font-weight: 700;
 }
 
 .btn-primary:hover {
-    background-color: #4338ca;
-    border-color: #4338ca;
+    background-color: var(--primary-soft);
 }
 
-/* ================================================
-   LAYOUT STYLES
-   ================================================ */
-
-body {
-    font-family: "Inter", system-ui, -apple-system, sans-serif;
-    color: var(--text-dark);
+.btn-outline-primary {
+    color: var(--primary);
+    border-color: var(--primary);
 }
 
-/* Navbar Custom */
-.navbar-brand {
-    font-weight: 700;
-    font-size: 1.5rem;
-}
-
-/* Footer */
-footer {
-    background-color: #1f2937;
+.btn-outline-primary:hover {
+    background-color: var(--primary);
     color: #fff;
 }
 
-/* Card Produk */
+.btn-accent {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: #111827;
+    font-weight: 700;
+}
+
+.btn-accent:hover {
+    opacity: 0.9;
+}
+
+/* =================================================
+   PRODUCT CARD
+   ================================================= */
+
+.product-card,
+.card {
+    background-color: var(--bg-card);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
 .product-card {
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: all 0.3s ease;
 }
 
 .product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-soft);
 }
 
-/* Badge Diskon */
+.card-img-top {
+    transition: transform 0.4s ease;
+}
+
+.product-card:hover .card-img-top {
+    transform: scale(1.08);
+}
+
+/* =================================================
+   BADGES
+   ================================================= */
+
+.badge-discount {
+    background-color: var(--danger);
+    color: #fff;
+    font-weight: 800;
+    padding: 6px 10px;
+    border-radius: 8px;
+}
+
+.badge.bg-primary {
+    background-color: var(--primary) !important;
+}
+
+.badge.bg-danger {
+    background-color: var(--danger) !important;
+}
+
+/* =================================================
+   WISHLIST
+   ================================================= */
+
+button[class*="wishlist-btn"] {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    border: none;
+}
+
+[data-theme="dark"] button[class*="wishlist-btn"] {
+    background-color: rgba(15, 23, 42, 0.9);
+}
+
+button[class*="wishlist-btn"] i {
+    font-size: 1.1rem;
+}
+
+/* =================================================
+   FOOTER
+   ================================================= */
+
+footer {
+    background: linear-gradient(180deg,
+            var(--primary),
+            #020617);
+    color: #e5e7eb;
+}
+
+footer h5,
+footer h6 {
+    font-weight: 800;
+    color: #ffffff;
+}
+
+footer a {
+    color: var(--text-muted);
+}
+
+footer a:hover {
+    color: var(--accent);
+}
+
+/* =================================================
+   UTILITIES
+   ================================================= */
+
+.text-primary {
+    color: var(--primary) !important;
+}
+
+.text-accent {
+    color: var(--accent) !important;
+}
+
+.bg-primary {
+    background-color: var(--primary) !important;
+}
+
+.bg-accent {
+    background-color: var(--accent) !important;
+}
+
+#themeToggle {
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    justify-content: center;
+}
+
+#themeToggle i {
+    font-size: 1.1rem;
+}
+
+/* ================================================
+   PRODUCT CARD – ASSALAAM FOOTBALL
+================================================ */
+
+.product-card {
+    background: #ffffff;
+    border-radius: 18px;
+    overflow: hidden;
+    transition: .25s ease;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, .08);
+    display: flex;
+    flex-direction: column;
+}
+
+[data-theme="dark"] .product-card {
+    background: #0f172a;
+}
+
+/* HOVER */
+.product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, .15);
+}
+
+/* IMAGE */
+.product-thumb {
+    overflow: hidden;
+    background: #f8fafc;
+}
+
+[data-theme="dark"] .product-thumb {
+    background: #020617;
+}
+
+.product-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    transition: transform .3s ease;
+}
+
+.product-card:hover .product-img {
+    transform: scale(1.05);
+}
+
+/* DISCOUNT BADGE */
 .badge-discount {
     position: absolute;
-    top: 10px;
-    left: 10px;
-    background-color: #ef4444;
-    color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.75rem;
+    top: 12px;
+    left: 12px;
+    background: var(--secondary-color);
+    color: #0f172a;
+    font-weight: 800;
+    font-size: .75rem;
+    padding: 6px 10px;
+    border-radius: 8px;
+}
+
+/* WISHLIST */
+.wishlist-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, .9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .2s ease;
+}
+
+[data-theme="dark"] .wishlist-btn {
+    background: rgba(15, 23, 42, .85);
+}
+
+.wishlist-btn i {
+    font-size: 1rem;
+}
+
+.wishlist-btn i.active {
+    color: #ef4444;
+}
+
+.wishlist-btn:hover {
+    background: var(--secondary-color);
+}
+
+/* BODY */
+.product-body {
+    padding: 16px;
+}
+
+.product-category {
+    font-size: .7rem;
+    letter-spacing: .08em;
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .product-category {
+    color: #94a3b8;
+}
+
+.product-title a {
+    color: var(--text-dark);
     font-weight: 600;
+    text-decoration: none;
+}
+
+[data-theme="dark"] .product-title a {
+    color: #e5e7eb;
+}
+
+/* PRICE */
+.old-price {
+    text-decoration: line-through;
+    color: var(--text-muted);
+}
+
+.product-price {
+    font-weight: 800;
+    font-size: 1.05rem;
+    color: var(--secondary-color);
+}
+
+/* STOCK */
+.stock-warning {
+    color: #f59e0b;
+    font-size: .75rem;
+}
+
+.stock-empty {
+    color: #ef4444;
+    font-size: .75rem;
+}
+
+/* FOOTER */
+.product-footer {
+    padding: 14px 16px;
+    background: transparent;
+}
+
+[data-theme="dark"] .product-footer {
+    background: #020617;
+}
+
+/* ================================================
+   HERO SECTION – LIGHT & DARK THEME
+================================================ */
+
+.hero-section {
+    background: linear-gradient(135deg,
+            rgba(0, 174, 240, 0.08),
+            rgba(182, 240, 0, 0.12));
+}
+
+/* DARK MODE */
+[data-theme="dark"] .hero-section {
+    background: radial-gradient(circle at top left,
+            rgba(0, 174, 240, 0.15),
+            #020617 60%);
+}
+
+/* BADGE */
+.hero-badge {
+    background-color: var(--secondary-color);
+    color: #0f172a;
+    font-weight: 700;
+    letter-spacing: .05em;
+}
+
+[data-theme="dark"] .hero-badge {
+    background-color: rgba(182, 240, 0, 0.15);
+    color: var(--secondary-color);
+    border: 1px solid rgba(182, 240, 0, .4);
+}
+
+/* TITLE */
+.hero-title {
+    font-size: clamp(2.2rem, 4vw, 3rem);
+    font-weight: 800;
+    color: var(--text-dark);
+    letter-spacing: -0.03em;
+}
+
+[data-theme="dark"] .hero-title {
+    color: #e5e7eb;
+}
+
+/* SUBTITLE */
+.hero-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    max-width: 520px;
+}
+
+[data-theme="dark"] .hero-subtitle {
+    color: #94a3b8;
+}
+
+/* IMAGE */
+.hero-image {
+    max-height: 420px;
+    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, .15));
+}
+
+/* DARK MODE IMAGE */
+[data-theme="dark"] .hero-image {
+    filter: drop-shadow(0 30px 60px rgba(0, 0, 0, .45));
+}
+
+/* BUTTON OVERRIDE (BIAR LEBIH PREMIUM) */
+.hero-section .btn-primary {
+    box-shadow: 0 10px 25px rgba(0, 174, 240, .35);
+}
+
+.hero-section .btn-outline-primary {
+    border-width: 2px;
+}
+
+/* ================= CATEGORY PRO ================= */
+.category-section {
+    background: linear-gradient(180deg, #f8fafc, #ffffff);
+}
+
+.badge-soft-primary {
+    background: rgba(13, 110, 253, .1);
+    color: #0d6efd;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: .75rem;
+}
+
+.category-card-pro {
+    display: block;
+    padding: 26px 18px;
+    border-radius: 20px;
+    text-decoration: none;
+    background: rgba(255, 255, 255, .85);
+    backdrop-filter: blur(10px);
+    color: #1e293b;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, .08);
+    transition: all .35s ease;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Gradient glow */
+.category-card-pro::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent, rgba(13, 110, 253, .15));
+    opacity: 0;
+    transition: .35s;
+}
+
+.category-card-pro:hover::before {
+    opacity: 1;
+}
+
+.category-card-pro:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 18px 50px rgba(13, 110, 253, .25);
+}
+
+/* Icon wrapper */
+.category-icon-wrap {
+    width: 84px;
+    height: 84px;
+    margin: 0 auto;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e0e7ff, #f8fafc);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 0 6px #fff;
+}
+
+/* Image */
+.category-img {
+    width: 46px;
+    height: 46px;
+    object-fit: contain;
+    transition: transform .35s ease;
+}
+
+.category-card-pro:hover .category-img {
+    transform: scale(1.15) rotate(-4deg);
+}
+
+.category-card-pro h6 {
+    font-size: .95rem;
+}
+
+.category-card-pro small {
+    color: #64748b;
+    font-size: .8rem;
+}
+
+/* ================= DARK MODE ================= */
+.theme-dark .category-section {
+    background: linear-gradient(180deg, #020617, #0f172a);
+}
+
+.theme-dark .badge-soft-primary {
+    background: rgba(56, 189, 248, .15);
+    color: #38bdf8;
+}
+
+.theme-dark .category-card-pro {
+    background: rgba(255, 255, 255, .06);
+    color: #f8fafc;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, .6);
+}
+
+.theme-dark .category-card-pro::before {
+    background: linear-gradient(135deg, transparent, rgba(56, 189, 248, .35));
+}
+
+.theme-dark .category-icon-wrap {
+    background: linear-gradient(135deg, #020617, #0f172a);
+    box-shadow: inset 0 0 0 6px rgba(255, 255, 255, .08);
+}
+
+.theme-dark .category-card-pro small {
+    color: #94a3b8;
+}
+
+/* ================= FEATURED SECTION ================= */
+.featured-section {
+    background: linear-gradient(180deg, #ffffff, #f8fafc);
+    position: relative;
+}
+
+/* Header badge */
+.badge-soft-success {
+    background: rgba(25, 135, 84, .1);
+    color: #198754;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: .75rem;
+}
+
+/* Divider accent (optional) */
+.featured-section::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 120px;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, #0d6efd, transparent);
+    transform: translateX(-50%);
+    opacity: .4;
+}
+
+/* ================= FEATURED DARK MODE ================= */
+.theme-dark .featured-section {
+    background: linear-gradient(180deg, #020617, #0f172a);
+}
+
+.theme-dark .badge-soft-success {
+    background: rgba(34, 197, 94, .15);
+    color: #22c55e;
+}
+
+.theme-dark .featured-section h2 {
+    color: #f8fafc;
+}
+
+.theme-dark .featured-section .text-muted {
+    color: #94a3b8 !important;
+}
+
+.theme-dark .featured-section::after {
+    background: linear-gradient(90deg, transparent, #38bdf8, transparent);
 }

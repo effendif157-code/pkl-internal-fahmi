@@ -131,7 +131,7 @@
     </div>
 
     {{-- 4. Top Selling Products --}}
-    <div class="card border-0 shadow-sm mt-4">
+    {{-- <div class="card border-0 shadow-sm mt-4">
         <div class="card-header bg-white py-3">
             <h5 class="card-title mb-0">Produk Terlaris</h5>
         </div>
@@ -148,62 +148,100 @@
                 @endforeach
             </div>
         </div>
-    </div>
-
-    {{-- Script Chart.js --}}
+    </div> --}}
+    @endsection
+    @push('scripts')
+    {{-- Script Chart.js
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        const ctx = document.getElementById('revenueChart').getContext('2d');
+        (function() {
+            // Data dari Controller
+            const rawData = {!! json_encode($revenueChart) !!};
+            console.log('Raw Data:', rawData);
 
-        // Data dari Controller (Blade to JS)
-        const labels = {!! json_encode($revenueChart->pluck('date')) !!};
-        const data = {!! json_encode($revenueChart->pluck('total')) !!};
-
-        new Chart(ctx, {
-            type: 'line', // Jenis grafik: Line chart
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Pendapatan (Rp)',
-                    data: data,
-                    borderColor: '#0d6efd', // Bootstrap Primary Color
-                    backgroundColor: 'rgba(13, 110, 253, 0.1)',
-                    borderWidth: 2,
-                    tension: 0.3, // Membuat garis sedikit melengkung (smooth)
-                    fill: true,
-                    pointRadius: 4,
-                    pointHoverRadius: 6
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false, // Penting agar Chart menyesuaikan container
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                // Format Tooltip jadi Rupiah
-                                return 'Rp ' + new Intl.NumberFormat('id-ID').format(context.raw);
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: { borderDash: [2, 4] },
-                        ticks: {
-                            callback: function(value) {
-                                return 'Rp ' + new Intl.NumberFormat('id-ID', { notation: "compact" }).format(value);
-                            }
-                        }
-                    },
-                    x: {
-                        grid: { display: false }
-                    }
-                }
+            // Pastikan data adalah array
+            if (!Array.isArray(rawData)) {
+                console.error('Revenue chart data is not an array:', rawData);
+                return;
             }
-        });
-    </script>
-@endsection
+
+            // Extract labels dan data
+            const labels = [];
+            const data = [];
+
+            rawData.forEach(item => {
+                if (item && typeof item === 'object') {
+                    labels.push(item.date || '');
+                    data.push(Number(item.total) || 0);
+                }
+            });
+
+            console.log('Labels:', labels);
+            console.log('Data:', data);
+
+            // Wait for DOM
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initChart);
+            } else {
+                initChart();
+            }
+
+            function initChart() {
+                const canvas = document.getElementById('revenueChart');
+
+                if (!canvas) {
+                    console.error('Canvas #revenueChart not found');
+                    return;
+                }
+
+                const ctx = canvas.getContext('2d');
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Pendapatan (Rp)',
+                            data: data,
+                            borderColor: '#0d6efd',
+                            backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: true,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return 'Rp ' + new Intl.NumberFormat('id-ID').format(context.raw);
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { borderDash: [2, 4] },
+                                ticks: {
+                                    callback: function(value) {
+                                        return 'Rp ' + new Intl.NumberFormat('id-ID', { notation: "compact" }).format(value);
+                                    }
+                                }
+                            },
+                            x: {
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+            }
+        })();
+    </script> --}}
+@endpush

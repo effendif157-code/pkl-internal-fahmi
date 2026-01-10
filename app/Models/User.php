@@ -3,10 +3,11 @@
 
 namespace App\Models;
 
+use App\Models\Cart;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Storage;
+use Storage;
 
 class User extends Authenticatable
 {
@@ -59,12 +60,6 @@ class User extends Authenticatable
     /**
      * User memiliki banyak item wishlist.
      */
-    public function wishlists()
-    {
-        return $this->hasMany(Wishlist::class);
-        return $this->belongsToMany(Product::class, 'wishlists')
-            ->withTimestamps();
-    }
 
     /**
      * User memiliki banyak pesanan.
@@ -77,7 +72,7 @@ class User extends Authenticatable
     /**
      * Relasi many-to-many ke products melalui wishlists.
      */
-    public function wishlistProducts()
+    public function wishlists()
     {
         return $this->belongsToMany(Product::class, 'wishlists')
             ->withTimestamps();
@@ -109,19 +104,8 @@ class User extends Authenticatable
         return $this->wishlists()
             ->where('product_id', $product->id)
             ->exists();
-
     }
 
-        // Tambahkan accessor untuk avatar URL
-
-    /**
-     * Get the avatar URL.
-     * Accessor ini otomatis dipanggil saat kita akses $user->avatar_url
-     * Logika Prioritas:
-     * 1. Cek Storage Lokal: Apakah user upload file custom? Jika ya, return URL local storage.
-     * 2. Cek URL Eksternal: Apakah user login via Google? Jika ya, return URL dari Google.
-     * 3. Fallback: Gunakan Gravatar berdasarkan hash email agar user tidak tampil polos.
-     */
     public function getAvatarUrlAttribute(): string
     {
         // Prioritas 1: Avatar yang di-upload (file fisik ada di server)
@@ -144,14 +128,14 @@ class User extends Authenticatable
         return "https://www.gravatar.com/avatar/{$hash}?d=mp&s=200";
     }
 
-    /**
-     * Get initials from name for avatar fallback.
-     * Contoh: "Agung Wahyudi" -> "AW"
-     * Berguna jika kita ingin membuat UI avatar berupa inisial huruf teks.
-     */
+/**
+ * Get initials from name for avatar fallback.
+ * Contoh: "Agung Wahyudi" -> "AW"
+ * Berguna jika kita ingin membuat UI avatar berupa inisial huruf teks.
+ */
     public function getInitialsAttribute(): string
     {
-        $words = explode(' ', $this->name);
+        $words    = explode(' ', $this->name);
         $initials = '';
 
         foreach ($words as $word) {

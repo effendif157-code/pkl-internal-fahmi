@@ -1,4 +1,5 @@
 <?php
+
 // app/Http/Controllers/Admin/ProductController.php
 
 namespace App\Http\Controllers\Admin;
@@ -20,7 +21,7 @@ class ProductController extends Controller
     /**
      * Menampilkan daftar produk dengan fitur pagination dan filtering.
      */
-    public function index(Request $request) : View
+    public function index(Request $request): View
     {
         $products = Product::query()
         // Eager Loading: Meload relasi kategori & gambar utama sekaligus.

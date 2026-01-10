@@ -19,23 +19,23 @@ class DashboardController extends Controller
         // Alasan: Jauh lebih hemat memori server.
 
         $stats = [
-            'total_revenue'   => Order::whereIn('status', ['processing', 'completed'])
-                ->sum('total_amount'), // SQL: SELECT SUM(total_amount) FROM orders WHERE ...
+            'total_revenue' => Order::whereIn('status', ['processing', 'completed'])
+                                    ->sum('total_amount'), // SQL: SELECT SUM(total_amount) FROM orders WHERE ...
 
-            'total_orders'    => Order::count(), // SQL: SELECT COUNT(*) FROM orders
+            'total_orders' => Order::count(), // SQL: SELECT COUNT(*) FROM orders
 
             // Pending Orders: Yang perlu tindakan segera admin
-            'pending_orders'  => Order::where('status', 'pending')
-                ->where('payment_status', 'paid') // Sudah bayar tapi belum diproses
-                ->count(),
+            'pending_orders' => Order::where('status', 'pending')
+                                     ->where('payment_status', 'paid') // Sudah bayar tapi belum diproses
+                                     ->count(),
 
-            'total_products'  => Product::count(),
+            'total_products' => Product::count(),
 
             'total_customers' => User::where('role', 'customer')->count(),
 
             // Stok Rendah: Produk dengan stok <= 5
             // Berguna untuk notifikasi re-stock
-            'low_stock'       => Product::where('stock', '<=', 5)->count(),
+            'low_stock' => Product::where('stock', '<=', 5)->count(),
         ];
 
         // 2. Data Tabel Pesanan Terbaru (5 transaksi terakhir)
@@ -49,12 +49,12 @@ class DashboardController extends Controller
         // Tantangan: Menghitung total qty terjual dari tabel relasi (order_items)
         // Solusi: withCount dengan query modifikasi (SUM quantity)
         $topProducts = Product::withCount(['orderItems as sold' => function ($q) {
-            // Kita hanya hitung item yang berasal dari order yang SUDAH DIBAYAR (paid)
-            $q->select(DB::raw('SUM(quantity)'))
-                ->whereHas('order', function ($query) {
-                    $query->where('payment_status', 'paid');
-                });
-        }])
+                // Kita hanya hitung item yang berasal dari order yang SUDAH DIBAYAR (paid)
+                $q->select(DB::raw('SUM(quantity)'))
+                  ->whereHas('order', function($query) {
+                      $query->where('payment_status', 'paid');
+                  });
+            }])
             ->having('sold', '>', 0) // Filter: Hanya tampilkan yang pernah terjual
             ->orderByDesc('sold')    // Urutkan dari yang paling laku
             ->take(5)
@@ -63,15 +63,28 @@ class DashboardController extends Controller
         // 4. Data Grafik Pendapatan (7 Hari Terakhir)
         // Kasus: Grouping data per tanggal
         // Kita gunakan DB::raw untuk format tanggal dari timestamp 'created_at'
-        $revenueChart = Order::select([
-            DB::raw('DATE(created_at) as date'),   // Ambil tanggalnya saja (2024-12-10)
-            DB::raw('SUM(total_amount) as total'), // Total omset hari itu
-        ])
+        $revenueData = Order::select([
+                DB::raw('DATE(created_at) as date'), // Ambil tanggalnya saja (2024-12-10)
+                DB::raw('SUM(total_amount) as total') // Total omset hari itu
+            ])
             ->where('payment_status', 'paid')
-            ->where('created_at', '>=', now()->subDays(7)) // Filter 7 hari ke belakang
-            ->groupBy('date')                              // Kelompokkan baris berdasarkan tanggal
-            ->orderBy('date', 'asc')                       // Urutkan kronologis
-            ->get();
+            ->where('created_at', '>=', now()->subDays(6)->startOfDay()) // 7 hari termasuk hari ini
+            ->groupBy('date') // Kelompokkan baris berdasarkan tanggal
+            ->orderBy('date', 'asc') // Urutkan kronologis
+            ->get()
+            ->keyBy('date'); // Index by date untuk mapping mudah
+
+        // Buat array 7 hari lengkap dengan data 0 jika tidak ada transaksi
+        $revenueChart = collect();
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i)->format('Y-m-d');
+            $dayData = $revenueData->get($date);
+
+            $revenueChart->push([
+                'date' => now()->subDays($i)->format('d M'),
+                'total' => $dayData ? $dayData->total : 0
+            ]);
+        }
 
         return view('admin.dashboard', compact('stats', 'recentOrders', 'topProducts', 'revenueChart'));
     }

@@ -1,5 +1,4 @@
 <?php
-// app/Http/Controllers/CartController.php
 
 namespace App\Http\Controllers;
 
@@ -11,7 +10,6 @@ class CartController extends Controller
 {
     protected $cartService;
 
-    // Inject Service melalui Constructor
     public function __construct(CartService $cartService)
     {
         $this->cartService = $cartService;
@@ -20,8 +18,19 @@ class CartController extends Controller
     public function index()
     {
         $cart = $this->cartService->getCart();
-        // Load produk dan gambar untuk ditampilkan
-        $cart->load(['items.product.primaryImage']);
+
+        if ($cart) {
+            $cart->load(['items.product.category']);
+
+            // 🔥 HITUNG SUBTOTAL & TOTAL DI BACKEND
+            foreach ($cart->items as $item) {
+                $item->calculated_subtotal =
+                    $item->product->price * $item->quantity;
+            }
+
+            $cart->calculated_total =
+                $cart->items->sum('calculated_subtotal');
+        }
 
         return view('cart.index', compact('cart'));
     }
@@ -33,35 +42,27 @@ class CartController extends Controller
             'quantity'   => 'required|integer|min:1',
         ]);
 
-        try {
-            $product = Product::findOrFail($request->product_id);
-            $this->cartService->addProduct($product, $request->quantity);
+        $product = Product::findOrFail($request->product_id);
+        $this->cartService->addProduct($product, $request->quantity);
 
-            return back()->with('success', 'Produk berhasil ditambahkan ke keranjang!');
-        } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
-        }
+        return back()->with('success', 'Produk berhasil ditambahkan ke keranjang!');
     }
 
     public function update(Request $request, $itemId)
     {
-        $request->validate(['quantity' => 'required|integer|min:0']);
+        $request->validate([
+            'quantity' => 'required|integer|min:1',
+        ]);
 
-        try {
-            $this->cartService->updateQuantity($itemId, $request->quantity);
-            return back()->with('success', 'Keranjang diperbarui.');
-        } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
-        }
+        $this->cartService->updateQuantity($itemId, $request->quantity);
+
+        return back()->with('success', 'Keranjang diperbarui.');
     }
 
     public function remove($itemId)
     {
-        try {
-            $this->cartService->removeItem($itemId);
-            return back()->with('success', 'Item dihapus dari keranjang.');
-        } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
-        }
+        $this->cartService->removeItem($itemId);
+
+        return back()->with('success', 'Item dihapus dari keranjang.');
     }
 }

@@ -7,17 +7,39 @@ class Cart extends Model
 {
     protected $fillable = [
         'user_id',
-        'product_id',
+        'session_id',
     ];
 
-    // relasi (opsional tapi dianjurkan)
+    protected $with = ['items.product'];
+
+    // ==================== RELATIONSHIPS ====================
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function items()
     {
         return $this->hasMany(CartItem::class);
     }
 
-    public function getTotalAttribute()
+    /**
+     * Hitung subtotal semua item di keranjang
+     */
+    public function getSubtotalAttribute()
     {
-        return $this->items->sum(fn ($item) => $item->subtotal);
+        return $this->items->sum(function ($item) {
+            return $item->total_price;
+        });
+    }
+
+    /**
+     * Hitung total berat semua item di keranjang
+     */
+    public function getTotalWeightAttribute()
+    {
+        return $this->items->sum(function ($item) {
+            return $item->total_weight;
+        });
     }
 }
