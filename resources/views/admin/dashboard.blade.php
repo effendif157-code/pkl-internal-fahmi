@@ -5,8 +5,6 @@
 @section('content')
     <div class="row g-4 mb-4">
         {{-- 1. Stats Cards Grid --}}
-
-        {{-- Revenue Card --}}
         <div class="col-sm-6 col-xl-3">
             <div class="card border-0 shadow-sm border-start border-4 border-success h-100">
                 <div class="card-body">
@@ -25,7 +23,6 @@
             </div>
         </div>
 
-        {{-- Pending Action Card --}}
         <div class="col-sm-6 col-xl-3">
             <div class="card border-0 shadow-sm border-start border-4 border-warning h-100">
                 <div class="card-body">
@@ -44,7 +41,6 @@
             </div>
         </div>
 
-        {{-- Low Stock Card --}}
         <div class="col-sm-6 col-xl-3">
             <div class="card border-0 shadow-sm border-start border-4 border-danger h-100">
                 <div class="card-body">
@@ -63,7 +59,6 @@
             </div>
         </div>
 
-        {{-- Total Products --}}
         <div class="col-sm-6 col-xl-3">
             <div class="card border-0 shadow-sm border-start border-4 border-primary h-100">
                 <div class="card-body">
@@ -91,7 +86,10 @@
                     <h5 class="card-title mb-0">Grafik Penjualan (7 Hari)</h5>
                 </div>
                 <div class="card-body">
-                    <canvas id="revenueChart" height="100"></canvas>
+                    {{-- Pastikan tinggi canvas ditentukan agar tidak menghilang --}}
+                    <div style="height: 300px;">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -108,12 +106,12 @@
                             <div class="list-group-item d-flex justify-content-between align-items-center px-4 py-3">
                                 <div>
                                     <div class="fw-bold text-primary">#{{ $order->order_number }}</div>
-                                    <small class="text-muted">{{ $order->user->name }}</small>
+                                    <small class="text-muted">{{ $order->user->name ?? 'Guest' }}</small>
                                 </div>
                                 <div class="text-end">
                                     <div class="fw-bold">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</div>
-                                    <span class="badge rounded-pill
-                                        {{ $order->payment_status == 'paid' ? 'bg-success bg-opacity-10 text-success' : 'bg-secondary bg-opacity-10 text-secondary' }}">
+                                    <span class="badge rounded-pill 
+                                        {{ $order->status == 'completed' ? 'bg-success text-white' : 'bg-warning text-dark' }}">
                                         {{ ucfirst($order->status) }}
                                     </span>
                                 </div>
@@ -130,8 +128,8 @@
         </div>
     </div>
 
-    {{-- 4. Top Selling Products --}}
-    {{-- <div class="card border-0 shadow-sm mt-4">
+    {{-- 4. Top Selling Products (SEKARANG SUDAH AKTIF) --}}
+    <div class="card border-0 shadow-sm mt-4">
         <div class="card-header bg-white py-3">
             <h5 class="card-title mb-0">Produk Terlaris</h5>
         </div>
@@ -139,109 +137,69 @@
             <div class="row g-4">
                 @foreach($topProducts as $product)
                     <div class="col-6 col-md-2 text-center">
-                        <div class="card h-100 border-0 hover-shadow transition">
-                            <img src="{{ $product->image_url }}" class="card-img-top rounded mb-2" style="max-height: 100px; object-fit: cover;">
-                            <h6 class="card-title text-truncate" style="font-size: 0.9rem">{{ $product->name }}</h6>
-                            <small class="text-muted">{{ $product->sold }} terjual</small>
+                        <div class="card h-100 border-0 shadow-none">
+                            @if($product->image)
+                                <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top rounded mb-2" style="height: 100px; object-fit: cover;">
+                            @else
+                                <div class="bg-light rounded mb-2 d-flex align-items-center justify-content-center" style="height: 100px;">
+                                    <i class="bi bi-image text-muted"></i>
+                                </div>
+                            @endif
+                            <h6 class="card-title text-truncate mb-1" style="font-size: 0.9rem">{{ $product->name }}</h6>
+                            <small class="text-success fw-bold">{{ $product->sold ?? 0 }} terjual</small>
                         </div>
                     </div>
                 @endforeach
             </div>
         </div>
-    </div> --}}
-    @endsection
-    @push('scripts')
-    {{-- Script Chart.js
+    </div>
+@endsection
+
+@push('scripts')
+    {{-- Script Chart.js (SEKARANG SUDAH AKTIF) --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        (function() {
-            // Data dari Controller
+        document.addEventListener('DOMContentLoaded', function() {
             const rawData = {!! json_encode($revenueChart) !!};
-            console.log('Raw Data:', rawData);
+            
+            const labels = rawData.map(item => item.date);
+            const data = rawData.map(item => item.total);
 
-            // Pastikan data adalah array
-            if (!Array.isArray(rawData)) {
-                console.error('Revenue chart data is not an array:', rawData);
-                return;
-            }
-
-            // Extract labels dan data
-            const labels = [];
-            const data = [];
-
-            rawData.forEach(item => {
-                if (item && typeof item === 'object') {
-                    labels.push(item.date || '');
-                    data.push(Number(item.total) || 0);
-                }
-            });
-
-            console.log('Labels:', labels);
-            console.log('Data:', data);
-
-            // Wait for DOM
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initChart);
-            } else {
-                initChart();
-            }
-
-            function initChart() {
-                const canvas = document.getElementById('revenueChart');
-
-                if (!canvas) {
-                    console.error('Canvas #revenueChart not found');
-                    return;
-                }
-
-                const ctx = canvas.getContext('2d');
-
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Pendapatan (Rp)',
-                            data: data,
-                            borderColor: '#0d6efd',
-                            backgroundColor: 'rgba(13, 110, 253, 0.1)',
-                            borderWidth: 2,
-                            tension: 0.3,
-                            fill: true,
-                            pointRadius: 4,
-                            pointHoverRadius: 6
-                        }]
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Pendapatan (Rp)',
+                        data: data,
+                        borderColor: '#0d6efd',
+                        backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#0d6efd'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
                     },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        return 'Rp ' + new Intl.NumberFormat('id-ID').format(context.raw);
-                                    }
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
                                 }
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: { borderDash: [2, 4] },
-                                ticks: {
-                                    callback: function(value) {
-                                        return 'Rp ' + new Intl.NumberFormat('id-ID', { notation: "compact" }).format(value);
-                                    }
-                                }
-                            },
-                            x: {
-                                grid: { display: false }
                             }
                         }
-                    }
-                });
-            }
-        })();
-    </script> --}}
+                    }a
+                }
+            });
+        });
+    </script>
 @endpush

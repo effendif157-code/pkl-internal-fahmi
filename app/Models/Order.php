@@ -17,6 +17,7 @@ class Order extends Model
         'shipping_name',
         'shipping_phone',
         'shipping_address',
+        'status', 
         'payment_status',
         'snap_token',
     ];
@@ -31,5 +32,4 @@ class Order extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
-
 }

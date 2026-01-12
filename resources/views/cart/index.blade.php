@@ -34,7 +34,7 @@
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <img src="{{ $item->product->image_url }}" class="rounded me-3" width="60"
+                                            <img src="https://parto.id/asset/foto_produk/IMG_20241206_124821_png_173346575986.png" class="rounded me-3" width="60"
                                                 height="60" style="object-fit: cover;">
                                             <div>
                                                 <a href="{{ route('catalog.show', $item->product->slug) }}"

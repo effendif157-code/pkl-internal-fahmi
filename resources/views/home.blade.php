@@ -1,7 +1,7 @@
 {{-- ================================================
 FILE: resources/views/home.blade.php
 FUNGSI: Halaman utama website
-THEME: Assalaam Football Store (Light & Dark)
+THEME: Fahmi Store (Light & Dark)
 ================================================ --}}
 
 @extends('layouts.app')

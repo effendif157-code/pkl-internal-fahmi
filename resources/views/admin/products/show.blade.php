@@ -29,18 +29,30 @@
                     <div class="card-body p-3">
 
                         {{-- Primary Image --}}
-                        <img src="{{ asset('storage/'.$product->primaryImage?->image_path) }}"
-                            class="img-fluid rounded mb-3 w-100" style="object-fit:cover;max-height:320px">
+                        <img
+                            src="{{ $product->primaryImage
+                                    ? asset('storage/'.$product->primaryImage->image_path)
+                                    : asset('images/no-image.png') }}"
+                            class="img-fluid rounded mb-3 w-100"
+                            style="object-fit:cover;max-height:320px"
+                            alt="{{ $product->name }}">
 
                         {{-- Gallery --}}
+                        @if($product->images->count())
                         <div class="row g-2">
                             @foreach($product->images as $image)
-                            <div class="col-4">
-                                <img src="{{ asset('storage/'.$image->image_path) }}" class="img-fluid rounded border"
-                                    style="object-fit:cover;height:90px;width:100%">
-                            </div>
+                                <div class="col-4">
+                                    <img
+                                        src="{{ asset('storage/'.$image->image_path) }}"
+                                        class="img-fluid rounded border"
+                                        style="object-fit:cover;height:90px;width:100%"
+                                        alt="Gallery {{ $product->name }}">
+                                </div>
                             @endforeach
                         </div>
+                        @else
+                            <p class="text-muted text-center mb-0">Tidak ada gambar tambahan</p>
+                        @endif
 
                     </div>
                 </div>
@@ -57,16 +69,17 @@
 
                         <p class="text-muted mb-2">
                             <i class="bi bi-tags me-1"></i>
-                            {{ $product->category->name }}
+                            {{ $product->category->name ?? '-' }}
                         </p>
 
                         {{-- Price --}}
                         <h5 class="text-primary fw-bold mb-3">
-                            Rp {{ number_format($product->discount_price, 0, ',', '.') }}
+                            Rp {{ number_format($product->discount_price ?: $product->price, 0, ',', '.') }}
+
                             @if($product->discount_price)
-                            <span class="text-muted fs-6 text-decoration-line-through ms-2">
-                                Rp {{ number_format($product->price, 0, ',', '.') }}
-                            </span>
+                                <span class="text-muted fs-6 text-decoration-line-through ms-2">
+                                    Rp {{ number_format($product->price, 0, ',', '.') }}
+                                </span>
                             @endif
                         </h5>
 
@@ -77,18 +90,18 @@
                             </span>
 
                             @if($product->is_featured)
-                            <span class="badge bg-warning text-dark">
-                                <i class="bi bi-star-fill me-1"></i> Unggulan
-                            </span>
+                                <span class="badge bg-warning text-dark">
+                                    <i class="bi bi-star-fill me-1"></i> Unggulan
+                                </span>
                             @endif
                         </div>
 
                         <hr>
 
                         {{-- Description --}}
-                        <p class="mb-4">
-                            {!! $product->description ?: '-' !!}
-                        </p>
+                        <div class="mb-4">
+                            {!! $product->description ?: '<span class="text-muted">Tidak ada deskripsi</span>' !!}
+                        </div>
 
                         {{-- Meta --}}
                         <div class="row">
