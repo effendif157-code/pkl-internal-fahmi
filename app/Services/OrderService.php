@@ -37,11 +37,13 @@ class OrderService
                 $totalAmount += $price * $item->quantity;
             }
 
-            // B. BUAT HEADER ORDER (TANPA payment_status)
+            // B. BUAT HEADER ORDER (SEKARANG DENGAN payment_status)
+            // PERBAIKAN: Menambahkan 'payment_status' agar tidak error SQL
             $order = Order::create([
                 'user_id'          => $user->id,
                 'order_number'     => 'ORD-' . strtoupper(Str::random(10)),
                 'status'           => 'pending',
+                'payment_status'   => 'unpaid', // SOLUSI UNTUK ERROR ANDA
                 'shipping_name'    => $shippingData['name'],
                 'shipping_address' => $shippingData['address'],
                 'shipping_phone'   => $shippingData['phone'],

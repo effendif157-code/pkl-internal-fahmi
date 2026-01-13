@@ -8,6 +8,7 @@ class CheckoutController extends Controller
 {
     public function index()
     {
+        // Mengambil keranjang user yang sedang login
         $cart = auth()->user()->cart;
 
         if (! $cart || $cart->items->isEmpty()) {
@@ -28,6 +29,7 @@ class CheckoutController extends Controller
         ]);
 
         try {
+            // Logic pembuatan order dipindahkan ke Service untuk kebersihan kode
             $order = $orderService->createOrder(
                 auth()->user(),
                 $validated
@@ -35,10 +37,11 @@ class CheckoutController extends Controller
 
             return redirect()
                 ->route('orders.show', $order)
-                ->with('success', 'Pesanan berhasil dibuat! Silahkan lakukan pembayaran.');
+                ->with('success', 'Pesanan berhasil dibuat! Silakan lakukan pembayaran.');
         } catch (\Throwable $e) {
+            // Menangkap error jika payment_status atau field lain bermasalah
             return back()
-                ->with('error', $e->getMessage());
+                ->with('error', 'Gagal membuat pesanan: ' . $e->getMessage());
         }
     }
 }

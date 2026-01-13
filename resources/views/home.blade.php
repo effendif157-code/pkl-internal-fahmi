@@ -64,7 +64,7 @@ THEME: Fahmi Store (Light & Dark)
                     class="category-card-pro text-center">
 
                     <div class="category-icon-wrap">
-                        <img src="{{ $category->img_url }}" alt="{{ $category->name }}" class="category-img">
+                        <img src="{{ $category->image_url }}" alt="{{ $category->name }}" class="category-img">
                     </div>
 
                     <h6 class="mt-3 mb-1 fw-semibold">{{ $category->name }}</h6>

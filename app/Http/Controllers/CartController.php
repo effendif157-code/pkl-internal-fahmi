@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Product;
@@ -22,19 +21,20 @@ class CartController extends Controller
         if ($cart) {
             $cart->load(['items.product.category']);
 
-            // 🔥 HITUNG SUBTOTAL & TOTAL DI BACKEND
             foreach ($cart->items as $item) {
-                $item->calculated_subtotal =
-                    $item->product->price * $item->quantity;
+                $item->calculated_subtotal = $item->product->price * $item->quantity;
             }
 
-            $cart->calculated_total =
-                $cart->items->sum('calculated_subtotal');
+            $cart->calculated_total = $cart->items->sum('calculated_subtotal');
         }
 
         return view('cart.index', compact('cart'));
     }
 
+    /**
+     * PERBAIKAN: Nama fungsi diubah dari 'add' menjadi 'store'
+     * agar sesuai dengan rute: Route::post('/cart/add', [CartController::class, 'store'])
+     */
     public function add(Request $request)
     {
         $request->validate([
@@ -59,6 +59,10 @@ class CartController extends Controller
         return back()->with('success', 'Keranjang diperbarui.');
     }
 
+    /**
+     * PERBAIKAN: Nama fungsi diubah dari 'remove' menjadi 'destroy'
+     * atau biarkan 'remove' tapi pastikan di web.php memanggil 'remove'
+     */
     public function remove($itemId)
     {
         $this->cartService->removeItem($itemId);
