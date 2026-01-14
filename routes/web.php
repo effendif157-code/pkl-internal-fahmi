@@ -11,7 +11,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\CartController;
 
-// Customer Controllers
+// Customer & Auth Controllers
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\HomeController;
@@ -19,8 +19,6 @@ use App\Http\Controllers\MidtransNotificationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WishlistController;
-
-// Auth & Payment Controllers
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -30,35 +28,34 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// ================================================
-// HALAMAN PUBLIK (Tanpa Login)
-// ================================================
+// --- HALAMAN PUBLIK ---
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/home', [HomeController::class, 'index']); // Alias untuk redirect default Laravel
+Route::get('/home', [HomeController::class, 'index']); // Alias redirect
 
-// Katalog Produk
 Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog.index');
 Route::get('/catalog/{slug}', [CatalogController::class, 'show'])->name('catalog.show');
 
-// ================================================
-// HALAMAN YANG BUTUH LOGIN (Customer)
-// ================================================
+// --- HALAMAN CUSTOMER (Wajib Login) ---
 Route::middleware('auth')->group(function () {
 
-    // Keranjang Belanja
+    // Keranjang & Wishlist
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
     Route::patch('/cart/{item}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/cart/{item}', [CartController::class, 'remove'])->name('cart.remove');
 
-    // Wishlist
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
     Route::post('/wishlist/toggle/{product}', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
 
-    // Checkout & Order Customer
+    // Checkout
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+
+    // Pesanan (Order)
+    // PENTING: Rute sukses & pending HARUS di atas rute {order} agar tidak bentrok
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/success/{order}', [OrderController::class, 'success'])->name('orders.success');
+    Route::get('/orders/pending/{order}', [OrderController::class, 'pending'])->name('orders.pending');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
 
     // Profil User
@@ -69,19 +66,16 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-// ================================================
-// HALAMAN ADMIN (Butuh Login + Role Admin)
-// ================================================
+// --- HALAMAN ADMIN ---
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
 
-    // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Produk CRUD (Destroy diarahkan ke DashboardController sesuai permintaan Anda)
+    // Produk CRUD
     Route::resource('products', AdminProductController::class)->except(['destroy']);
     Route::delete('/products/{product}', [DashboardController::class, 'destroy'])->name('products.destroy');
 
-    // Resource Categories & Users
+    // Kategori & User
     Route::resource('categories', CategoryController::class)->except(['show']);
     Route::resource('users', UserController::class);
 
@@ -89,39 +83,22 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('orders', AdminOrderController::class)->only(['index', 'show', 'update']);
     Route::patch('/orders/{order}/update-status', [AdminOrderController::class, 'updateStatus'])->name('orders.update-status');
 
-    // Laporan & Export (Dipindahkan ke dalam group Admin agar aman)
+    // Laporan
     Route::get('/reports/sales', [ReportController::class, 'sales'])->name('reports.sales');
     Route::get('/reports/export-sales', [ReportController::class, 'exportSales'])->name('reports.export-sales');
 });
 
-// ================================================
-// AUTH & OAUTH
-// ================================================
+// --- AUTH & OAUTH ---
 Auth::routes();
 
-// Google Login
 Route::controller(GoogleController::class)->group(function () {
     Route::get('/auth/google', 'redirect')->name('auth.google');
     Route::get('/auth/google/callback', 'callback')->name('auth.google.callback');
 });
 
-// Webhook Midtrans
+// --- MIDTRANS WEBHOOK ---
+// Letakkan di luar middleware auth agar server Midtrans bisa mengirim data
 Route::post('midtrans/notification', [MidtransNotificationController::class, 'handle'])->name('midtrans.notification');
-// Tambahkan ini di dalam group middleware auth
-Route::get('/orders/success', [OrderController::class, 'success'])->name('orders.success');
-Route::middleware('auth')->group(function () {
-    // ... rute lainnya ...
 
-    // Rute untuk menangani pengalihan setelah pembayaran Midtrans
-    Route::get('/orders/{order}/success', [OrderController::class, 'success'])->name('orders.success');
-    Route::get('/orders/{order}/pending', [OrderController::class, 'pending'])->name('orders.pending');
-});
-Route::middleware('auth')->group(function () {
-    // Gunakan parameter order agar ID pesanan (seperti '6') bisa ditangkap
-    Route::get('/orders/success/{order}', [OrderController::class, 'success'])->name('orders.success');
-});
-// Pastikan rute ini berada di dalam group middleware 'auth'
-Route::get('/orders/success', [OrderController::class, 'success'])->name('orders.success');
-Route::middleware('auth')->group(function () {
-    Route::get('/orders/pending/{order}', [OrderController::class, 'pending'])->name('orders.pending');
-});
+// Tambahkan di web.php
+Route::post('/midtrans/callback', [App\Http\Controllers\OrderController::class, 'callback'])->name('midtrans.callback');
