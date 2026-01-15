@@ -102,3 +102,10 @@ Route::post('midtrans/notification', [MidtransNotificationController::class, 'ha
 
 // Tambahkan di web.php
 Route::post('/midtrans/callback', [App\Http\Controllers\OrderController::class, 'callback'])->name('midtrans.callback');
+
+Route::middleware('auth')->group(function () {
+    // ... rute profil lainnya ...
+
+    // Tambahkan baris ini:
+    Route::delete('/profile/avatar', [ProfileController::class, 'destroyAvatar'])->name('profile.avatar.destroy');
+});
